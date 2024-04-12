@@ -17,7 +17,7 @@ fn main() {
     let name = ask_name();
     for i in 0..visitor_list.len() {
         if visitor_list[i] == name {
-            println!("Hello, {}", name);
+            println!("Hello, {}.", name);
         }
     }
 }

@@ -3,15 +3,25 @@
 use std::io::stdin;
 
 #[derive(Debug)]
+enum VisitorAction {
+    Accept,
+    AcceptWithNote { note: String },
+    Refuse,
+    Probation,
+}
+
+#[derive(Debug)]
 struct Visitor {
     name: String,
-    greeting: String,
+    action: VisitorAction,
+    age: i8,
 }
 impl Visitor {
-    fn new(name: &str, greeting: &str) -> Self {
+    fn new(name: &str, action: VisitorAction, age: i8) -> Self {
         Self {
             name: name.to_lowercase(),
-            greeting: greeting.to_string(),
+            action,
+            age,
         }
     }
 
@@ -31,9 +41,9 @@ fn ask_name() -> String {
 
 fn main() {
     let mut visitor_list = vec![
-        Visitor::new("bubba", "Hey, Bubba! Enjoy de Bungalow!"),
-        Visitor::new("steve", "Hi Steve, we got a package for you."),
-        Visitor::new("holt", "Who invited the Captain?"),
+        Visitor::new("bubba", 29, "Hey, Bubba! Enjoy de Bungalow!"),
+        Visitor::new("steve", 18, "Hi Steve, we got a package for you."),
+        Visitor::new("holt", 37, "Who invited the Captain?"),
     ];
 
     loop {

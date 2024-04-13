@@ -1,5 +1,22 @@
 use std::io::stdin;
 
+struct Visitor {
+    name: String,
+    greeting: String,
+}
+impl Visitor {
+    fn new(name: &str, greeting: &str) -> Self {
+        Self {
+            name: name.to_lowercase(),
+            greeting: greeting.to_string(),
+        }
+    }
+
+    fn greet(&self) {
+        println!("{}", self.greeting);
+    }
+}
+
 fn ask_name() -> String {
     let mut user_name = String::new();
     stdin()
@@ -10,7 +27,11 @@ fn ask_name() -> String {
 }
 
 fn main() {
-    let visitor_list = ["bubba", "annita", "chimichanga"];
+    let visitor_list = [
+        Visitor::new("bubba", "Hey, Bubba! Enjoy de Bungalow!"),
+        Visitor::new("steve", "Hi Steve, we got a package for you."),
+        Visitor::new("holt", "Who invited the Captain?"),
+    ];
 
     println!("Hello! What's your name?");
 

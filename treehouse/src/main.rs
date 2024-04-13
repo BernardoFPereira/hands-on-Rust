@@ -26,7 +26,19 @@ impl Visitor {
     }
 
     fn greet(&self) {
-        println!("{}", self.greeting);
+        match &self.action {
+            VisitorAction::Accept => println!("Welcome to the Bungalow, {}!", self.name),
+            VisitorAction::AcceptWithNote { note } => {
+                println!("Welcome to the Bungalow, {}!", self.name);
+                println!("{}", note);
+            }
+            VisitorAction::Probation => {
+                println!("{}, is now on probation! Rejoice!", self.name);
+            }
+            VisitorAction::Refuse => {
+                println!("Go. Away.");
+            }
+        }
     }
 }
 
@@ -41,9 +53,16 @@ fn ask_name() -> String {
 
 fn main() {
     let mut visitor_list = vec![
-        Visitor::new("bubba", 29, "Hey, Bubba! Enjoy de Bungalow!"),
-        Visitor::new("steve", 18, "Hi Steve, we got a package for you."),
-        Visitor::new("holt", 37, "Who invited the Captain?"),
+        Visitor::new("bubba", VisitorAction::Accept, 29),
+        Visitor::new(
+            "steve",
+            VisitorAction::AcceptWithNote {
+                note: String::from("Your lemonade's ready, man!"),
+            },
+            18,
+        ),
+        Visitor::new("holt", VisitorAction::Accept, 37),
+        Visitor::new("johnny", VisitorAction::Refuse, 37),
     ];
 
     loop {
@@ -58,7 +77,7 @@ fn main() {
                     break;
                 } else {
                     println!("{} is not on the list.", name);
-                    visitor_list.push(Visitor::new(&name, "New friend."));
+                    visitor_list.push(Visitor::new(&name, VisitorAction::Probation, 0));
                 }
             }
         }

@@ -36,17 +36,10 @@ fn main() {
     println!("Hello! What's your name?");
 
     let name = ask_name();
-    let mut let_them_in = false;
 
-    for visitor in &visitor_list {
-        if visitor == &name {
-            let_them_in = true;
-        }
-    }
-
-    if let_them_in {
-        println!("Welcome to the Bungalow!");
-    } else {
-        println!("DENIED!");
+    let known_visitor = visitor_list.iter().find(|visitor| visitor.name == name);
+    match known_visitor {
+        Some(visitor) => visitor.greet(),
+        None => println!("You're not on the list. Move on!"),
     }
 }

@@ -34,6 +34,9 @@ impl Visitor {
             }
             VisitorAction::Probation => {
                 println!("{}, is now on probation! Rejoice!", self.name);
+                if self.age > 21 {
+                    println!("Hold the beer on {}!", self.name);
+                }
             }
             VisitorAction::Refuse => {
                 println!("Go. Away.");

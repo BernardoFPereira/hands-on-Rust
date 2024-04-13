@@ -12,12 +12,20 @@ fn ask_name() -> String {
 fn main() {
     let visitor_list = ["bubba", "annita", "chimichanga"];
 
-    println!("Welcome to the Bungalow! What's your name?");
+    println!("Hello! What's your name?");
 
     let name = ask_name();
-    for i in 0..visitor_list.len() {
-        if visitor_list[i] == name {
-            println!("Hello, {}.", name);
+    let mut let_them_in = false;
+
+    for visitor in &visitor_list {
+        if visitor == &name {
+            let_them_in = true;
         }
+    }
+
+    if let_them_in {
+        println!("Welcome to the Bungalow!");
+    } else {
+        println!("DENIED!");
     }
 }

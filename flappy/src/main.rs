@@ -37,6 +37,20 @@ impl State {
             }
         }
     }
+    fn dead(&mut self, ctx: &mut BTerm) {
+        ctx.cls();
+        ctx.print_centered(5, "YOU'RE DEAD!");
+        ctx.print_centered(8, "[P]lay Again");
+        ctx.print_centered(9, "[Q]uit");
+
+        if let Some(key) = ctx.key {
+            match key {
+                VirtualKeyCode::P => self.restart(),
+                VirtualKeyCode::Q => ctx.quitting = true,
+                _ => {}
+            }
+        }
+    }
 }
 impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {

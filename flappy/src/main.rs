@@ -6,6 +6,10 @@ enum GameMode {
     End,
 }
 
+const SCREEN_WIDTH: i32 = 80;
+const SCREEN_HEIGHT: i32 = 50;
+const FRAME_DURATION: f32 = 75.0;
+
 struct Player {
     x: i32,
     y: i32,
@@ -14,13 +18,13 @@ struct Player {
 impl Player {
     fn new(x: i32, y: i32) -> Self {
         Self {
-            x: 0,
-            y: 0,
+            x,
+            y,
             velocity: 0.0,
         }
     }
     fn render(&mut self, ctx: &mut BTerm) {
-        ctx.set(1, self.y, YELLOW, BLACK, to_cp437('@'));
+        ctx.set(5, self.y, YELLOW, BLACK, to_cp437('@'));
     }
     fn gravity_and_move(&mut self) {
         if self.velocity < 2.0 {
@@ -32,25 +36,48 @@ impl Player {
             self.y = 0;
         }
     }
+    fn flap_wings(&mut self) {
+        self.velocity = -2.0;
+    }
 }
 
 struct State {
+    player: Player,
+    frame_time: f32,
     mode: GameMode,
 }
 impl State {
     fn new() -> Self {
         Self {
+            player: Player::new(5, SCREEN_HEIGHT / 2),
+            frame_time: 0.0,
             mode: GameMode::Menu,
         }
     }
 
     fn play(&mut self, ctx: &mut BTerm) {
-        // TODO: fill in later
-        self.mode = GameMode::End;
+        ctx.cls_bg(NAVY);
+        self.frame_time += ctx.frame_time_ms;
+        if self.frame_time > FRAME_DURATION {
+            self.frame_time = 0.0;
+            self.player.gravity_and_move();
+        }
+        if let Some(VirtualKeyCode::Space) = ctx.key {
+            self.player.flap_wings();
+        }
+        self.player.render(ctx);
+        ctx.print(0, 0, "Press SPACE to flap!");
+
+        if self.player.y > SCREEN_HEIGHT {
+            self.mode = GameMode::End;
+        }
     }
+
     fn restart(&mut self) {
+        self.player = Player::new(5, 25);
         self.mode = GameMode::Playing;
     }
+
     fn main_menu(&mut self, ctx: &mut BTerm) {
         ctx.cls();
         ctx.print_centered(5, "Welcome to Flappy Dragon");
@@ -65,6 +92,7 @@ impl State {
             }
         }
     }
+
     fn dead(&mut self, ctx: &mut BTerm) {
         ctx.cls();
         ctx.print_centered(5, "YOU'RE DEAD!");

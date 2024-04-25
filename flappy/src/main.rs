@@ -13,28 +13,41 @@ const PLAYER_OFFSET: i32 = 5;
 
 struct Player {
     x: i32,
-    y: i32,
+    y: f32,
     velocity: f32,
 }
 impl Player {
     fn new(x: i32, y: i32) -> Self {
         Self {
             x,
-            y,
+            y: y as f32,
             velocity: 0.0,
         }
     }
     fn render(&mut self, ctx: &mut BTerm) {
-        ctx.set(5, self.y, YELLOW, BLACK, to_cp437('@'));
+        ctx.set_active_console(1);
+
+        ctx.cls();
+        ctx.set_fancy(
+            PointF::new(5.0, self.y),
+            1,
+            Degrees::new(0.0),
+            PointF::new(1.0, 1.0),
+            YELLOW,
+            BLACK,
+            to_cp437('@'),
+        );
+
+        ctx.set_active_console(0);
     }
     fn gravity_and_move(&mut self) {
         if self.velocity < 2.0 {
             self.velocity += 0.2;
         }
-        self.y += self.velocity as i32;
+        self.y += self.velocity;
         self.x += 1;
-        if self.y < 0 {
-            self.y = 0;
+        if self.y < 0.0 {
+            self.y = 0.0;
         }
     }
     fn flap_wings(&mut self) {
@@ -70,8 +83,8 @@ impl Obstacle {
     fn hit_obstacle(&self, player: &Player) -> bool {
         let half_size = self.size / 2;
         let does_x_match = player.x + PLAYER_OFFSET == self.x;
-        let player_above_gap = player.y < self.gap_y - half_size;
-        let player_below_gap = player.y > self.gap_y + half_size;
+        let player_above_gap = (player.y as i32) < self.gap_y - half_size;
+        let player_below_gap = (player.y as i32) > self.gap_y + half_size;
 
         does_x_match && (player_above_gap || player_below_gap)
     }
@@ -118,7 +131,7 @@ impl State {
 
         self.player.render(ctx);
 
-        if self.player.y > SCREEN_HEIGHT || self.obstacle.hit_obstacle(&self.player) {
+        if self.player.y as i32 > SCREEN_HEIGHT || self.obstacle.hit_obstacle(&self.player) {
             self.mode = GameMode::End;
         }
     }
@@ -147,6 +160,10 @@ impl State {
     }
 
     fn dead(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(1);
+        ctx.cls();
+
+        ctx.set_active_console(0);
         ctx.cls();
         ctx.print_centered(5, "YOU DIED!");
         ctx.print_centered(7, &format!("Your earned {} points!", self.score));
@@ -174,6 +191,7 @@ impl GameState for State {
 
 fn main() -> BError {
     let context = BTermBuilder::simple80x50()
+        .with_fancy_console(SCREEN_WIDTH, SCREEN_HEIGHT, "terminal8x8.png")
         .with_tile_dimensions(16, 16)
         .with_title("Flappy Tutorial")
         .build()?;

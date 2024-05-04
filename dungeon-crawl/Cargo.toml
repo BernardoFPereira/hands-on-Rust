@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 bracket-lib = { version = "0.8.7", features = ["webgpu"], default_features = false }
+legion = "0.4.0"

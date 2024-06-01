@@ -8,6 +8,7 @@ pub fn player_input(
     #[resource] map: &Map,
     #[resource] key: &Option<VirtualKeyCode>,
     #[resource] camera: &mut Camera,
+    #[resource] turn_state: &mut TurnState,
 ) {
     if let Some(key) = key {
         let delta = match key {
@@ -19,6 +20,10 @@ pub fn player_input(
             VirtualKeyCode::Numpad9 => Point::new(1, -1),
             VirtualKeyCode::Numpad1 => Point::new(-1, 1),
             VirtualKeyCode::Numpad3 => Point::new(1, 1),
+            VirtualKeyCode::Numpad5 => {
+                *turn_state = TurnState::PlayerTurn;
+                Point::new(0, 0)
+            }
             _ => Point::new(0, 0),
         };
         if delta.x != 0 || delta.y != 0 {
@@ -28,6 +33,7 @@ pub fn player_input(
                 if map.can_enter_tile(destination) {
                     *pos = destination;
                     camera.on_player_move(destination);
+                    *turn_state = TurnState::PlayerTurn;
                 }
             });
         }

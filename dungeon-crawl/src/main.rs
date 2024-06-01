@@ -52,6 +52,7 @@ impl State {
         resources.insert(TurnState::AwaitingInput);
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
+
         Self {
             ecs,
             resources,
@@ -67,7 +68,9 @@ impl GameState for State {
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
+
         self.resources.insert(ctx.key);
+
         let current_state = self.resources.get::<TurnState>().unwrap().clone();
         match current_state {
             TurnState::AwaitingInput => self
@@ -80,6 +83,7 @@ impl GameState for State {
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
         }
+
         render_draw_buffer(ctx).expect("Rendering error");
     }
 }
